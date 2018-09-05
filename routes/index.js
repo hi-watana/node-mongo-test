@@ -7,13 +7,6 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-var mongoClient = require('mongodb').MongoClient;
-var mongoose = require('mongoose');
-
-var assert = require('assert');
-const MONGODB_URI = 'mongodb://localhost:27017';
-
-mongoose.connect(MONGODB_URI);
 var model = require('../js/model');
 var TodoItem = model.TodoItem;
 
@@ -24,7 +17,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/todos', (req, res, next) => {
     console.log('/todos');
-    
+
     TodoItem.find((error, result) => {
         if (error) throw error;
         res.json({todos: result});
@@ -39,8 +32,20 @@ router.post('/todos', (req, res, next) => {
     todoItem.save((error) => {
         if (error) throw error;
     })
-    
+
     res.end(JSON.stringify(req.body));
+});
+
+router.post('/check', (req, res, next) => {
+    console.log(req.body.isdone);
+    TodoItem.update(
+        {_id: req.body._id},
+        {$set: {isdone: req.body.isdone}},
+        (error) => {
+            if (error) throw error;
+        }
+    )
+    res.json({});
 });
 
 module.exports = router;
