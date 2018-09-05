@@ -1,3 +1,5 @@
+'use strict';
+
 window.onload = () => {
     let url = '/todos';
     var request = new XMLHttpRequest();
@@ -68,6 +70,28 @@ const addTableItem = (todo, request) => {
     var new_label = document.createElement('input');
     new_label.setAttribute('type', 'checkbox');
     new_label.setAttribute('value', '');
+    new_label.checked = todo.isdone;
+    new_label.id = todo._id;
+    new_label.addEventListener('change', function (event) {
+        let url = '/check';
+        var request = new XMLHttpRequest();
+        request.open('POST', url);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.responseType = 'json';
+        request.send(JSON.stringify({_id: this.id, isdone: this.checked}));
+        console.log('sent');
+
+        request.onreadystatechange = () => {
+            if (request.readyState != 4) {
+                // requesting in progress
+            } else if (request.status != 200) {
+                // request failed
+            } else {
+                // successfully requested
+                console.log('toggle');
+            }
+        };
+    })
     new_div.appendChild(new_label);
     new_td1.appendChild(new_div);
     new_tr.appendChild(new_td1);
