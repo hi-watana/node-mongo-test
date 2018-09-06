@@ -1,5 +1,5 @@
 window.onload = () => {
-    let url = '/todos';
+    var url = '/todos';
     var request = new XMLHttpRequest();
     request.open('POST', url);
     request.responseType = 'json';
@@ -22,13 +22,48 @@ window.onload = () => {
 
 var main_divs = document.getElementsByTagName('main')[0].getElementsByTagName('div');
 var div_add = main_divs[0];
-var div_add_button = div_add.getElementsByTagName('form')[0].getElementsByTagName('button')[0];
+
+var div_add_form = div_add.getElementsByTagName('form')[0];
+
+// ignore submit
+div_add_form.addEventListener('submit', (event) => {
+    event.preventDefault();
+}, false);
+
+var div_add_input = div_add_form.getElementsByTagName('input')[0];
+
+// Input validation
+div_add_input.addEventListener('keyup', (event) => {
+    var inputValue = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0].value;
+    if (trimWhitespaces(inputValue) == '') {
+        if (!div_add_button.hasAttribute('disabled'))
+            div_add_button.setAttribute('disabled', 'disabled');
+    } else {
+        if (div_add_button.hasAttribute('disabled'))
+        div_add_button.removeAttribute('disabled');
+    }
+}, false);
+
+// Disable button when some key is being pressed.
+div_add_input.addEventListener('keydown', (event) => {
+    if (!div_add_button.hasAttribute('disabled'))
+        div_add_button.setAttribute('disabled', 'disabled');
+}, false);
+
+var div_add_textarea = div_add_form.getElementsByTagName('textarea')[0];
+
+var div_add_button = div_add_form.getElementsByTagName('button')[0];
 
 div_add_button.addEventListener('click', (event) => {
-    var elm = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0];
-    var inputValue = trimWhitespaces(elm.value);
+    var inputValue = trimWhitespaces(div_add_input.value);
+    var textareaValue = div_add_textarea.value;
     var url = '/save';
-    var data = JSON.stringify({ isdone: false, content: inputValue });
+    var data = JSON.stringify(
+        {
+            isdone: false,
+            title: inputValue,
+            description: textareaValue
+        });
     var request = new XMLHttpRequest();
     request.open('POST', url);
     request.setRequestHeader('Content-Type', 'application/json');
@@ -47,31 +82,10 @@ div_add_button.addEventListener('click', (event) => {
             addTableItem(todo, request);
         }
     };
-    elm.value = '';
+    div_add_input.value = '';
+    div_add_textarea.value = '';
 
 });
-
-var div_add_textarea = div_add.getElementsByTagName('form')[0];
-
-div_add_textarea.addEventListener('keyup', (event) => {
-    var inputValue = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0].value;
-    if (trimWhitespaces(inputValue) == '') {
-        if (!div_add_button.hasAttribute('disabled'))
-            div_add_button.setAttribute('disabled', 'disabled');
-    } else {
-        if (div_add_button.hasAttribute('disabled'))
-        div_add_button.removeAttribute('disabled');
-    }
-}, false);
-
-div_add_textarea.addEventListener('keydown', (event) => {
-    if (!div_add_button.hasAttribute('disabled'))
-        div_add_button.setAttribute('disabled', 'disabled');
-}, false);
-
-div_add_textarea.addEventListener('submit', (event) => {
-    event.preventDefault();
-}, false);
 
 const addTableItem = (todo, request) => {
     var new_tr = document.createElement('tr');
@@ -104,12 +118,19 @@ const addTableItem = (todo, request) => {
     new_div.appendChild(new_label);
     new_td1.appendChild(new_div);
     new_tr.appendChild(new_td1);
+    new_tr.id = todo._id;
     var new_td2 = document.createElement('td');
 
     var result = request.response;
-    new_td2.appendChild(document.createTextNode(todo.content));
+    new_td2.appendChild(document.createTextNode(todo.title));
     new_td2.classList.add('td-break');
     new_tr.appendChild(new_td2);
+    new_tr.classList.add('tr-pointer');
+
+    new_tr.addEventListener('click', function (event) {
+        window.location.href = '/item?id=' + this.id;
+    });
+
     main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0].appendChild(new_tr);
 
 }

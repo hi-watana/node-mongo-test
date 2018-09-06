@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 // schema
 var TodoItem = new Schema({
     isdone: Boolean,
-    content: String
+    title: String,
+    description: String
 });
 
 const MONGODB_URI = process.env.MONGODB_URI;

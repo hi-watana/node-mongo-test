@@ -3,41 +3,35 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 
 router.use(bodyParser.urlencoded({
-    extended: true
+  extended: true
 }));
 router.use(bodyParser.json());
 
 var model = require('../js/model');
 var TodoItem = model.TodoItem;
 
-/* GET home page. */
+/* GET detail of an item. */
 router.get('/', (req, res, next) => {
-    res.render('index', {title: 'Todo App'});
+    res.render('item', { title: 'Detail', appTitle: 'Todo App' });
 });
 
-router.post('/todos', (req, res, next) => {
-    TodoItem.find((error, result) => {
+router.post('/', (req, res, next) => {
+    TodoItem.findById(req.body._id, (error, result) => {
         if (error) throw error;
-        res.json({todos: result});
+        res.json(result);
     });
 });
 
-router.post('/save', (req, res, next) => {
-    new TodoItem(req.body).save((error, data) => {
-        if (error) throw error;
-        res.json(data);
-    });
-});
-
-router.post('/check', (req, res, next) => {
+router.post('/update', (req, res, next) => {
     TodoItem.update(
         {_id: req.body._id},
-        {$set: {isdone: req.body.isdone}},
+        {$set: {title: req.body.title, description: req.body.description}},
         (error) => {
             if (error) throw error;
+            res.redirect('/');
         }
     );
-    res.json({});
+    
 });
 
 module.exports = router;
