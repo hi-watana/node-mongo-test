@@ -23,38 +23,50 @@ window.onload = () => {
 }
 
 var main_divs = document.getElementsByTagName('main')[0].getElementsByTagName('div');
-main_divs[0].getElementsByTagName('form')[0].getElementsByTagName('button')[0].addEventListener('click', (event) => {
-    var elm = main_divs[0].getElementsByTagName('form')[0].getElementsByTagName('input')[0];
-    var inputValue = elm.value;
-    if (inputValue === '') {
-        alert('You can\'t add an empty item.');
-    } else {
-        let url = '/todos';
-        var data = JSON.stringify({isdone: false, content: inputValue});
-        var request = new XMLHttpRequest();
-        request.open('POST', url);
-        request.setRequestHeader('Content-Type', 'application/json');
+var div_add = main_divs[0];
+var div_add_button = div_add.getElementsByTagName('form')[0].getElementsByTagName('button')[0];
 
-        request.responseType = 'json';
-        request.send(data);
+div_add_button.addEventListener('click', (event) => {
+    var elm = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0];
+    var inputValue = trimWhitespaces(elm.value);
+    var url = '/todos';
+    var data = JSON.stringify({ isdone: false, content: inputValue });
+    var request = new XMLHttpRequest();
+    request.open('POST', url);
+    request.setRequestHeader('Content-Type', 'application/json');
 
-        request.onreadystatechange = () => {
-            if (request.readyState != 4) {
-                // requesting in progress
-            } else if (request.status != 200) {
-                // request failed
-            } else {
-                // successfully requested
-                var todo = request.response;
-                addTableItem(todo, request);
-            }
-        };
-    }
+    request.responseType = 'json';
+    request.send(data);
+
+    request.onreadystatechange = () => {
+        if (request.readyState != 4) {
+            // requesting in progress
+        } else if (request.status != 200) {
+            // request failed
+        } else {
+            // successfully requested
+            var todo = request.response;
+            addTableItem(todo, request);
+        }
+    };
     elm.value = '';
 
 });
 
-main_divs[0].getElementsByTagName('form')[0].addEventListener('submit', (event) => {
+var div_add_textarea = div_add.getElementsByTagName('form')[0];
+
+div_add_textarea.addEventListener('keyup', (event) => {
+    var inputValue = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0].value;
+    if (trimWhitespaces(inputValue) == '') {
+        if (!div_add_button.hasAttribute('disabled'))
+            div_add_button.setAttribute('disabled', 'disabled');
+    } else {
+        if (div_add_button.hasAttribute('disabled'))
+        div_add_button.removeAttribute('disabled');
+    }
+}, false);
+
+div_add_textarea.addEventListener('submit', (event) => {
     event.preventDefault();
 }, false);
 
@@ -96,4 +108,8 @@ const addTableItem = (todo, request) => {
     new_tr.appendChild(new_td2);
     main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0].appendChild(new_tr);
 
+}
+
+const trimWhitespaces = (s) => {
+    return s.replace(/^\s+|\s+$/, '');
 }
