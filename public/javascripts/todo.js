@@ -64,6 +64,11 @@ div_add_textarea.addEventListener('keyup', (event) => {
     }
 }, false);
 
+div_add_textarea.addEventListener('keydown', (event) => {
+    if (!div_add_button.hasAttribute('disabled'))
+        div_add_button.setAttribute('disabled', 'disabled');
+}, false);
+
 div_add_textarea.addEventListener('submit', (event) => {
     event.preventDefault();
 }, false);
