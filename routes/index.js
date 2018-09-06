@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
     res.render('index', {title: 'Todo App'});
 });
 
-router.get('/todos', (req, res, next) => {
+router.post('/todos', (req, res, next) => {
     console.log('/todos');
 
     TodoItem.find((error, result) => {
@@ -24,7 +24,7 @@ router.get('/todos', (req, res, next) => {
     });
 });
 
-router.post('/todos', (req, res, next) => {
+router.post('/save', (req, res, next) => {
 
     console.log(req.body);
     var todoItem = new TodoItem(req.body);

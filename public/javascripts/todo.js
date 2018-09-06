@@ -1,7 +1,7 @@
 window.onload = () => {
     let url = '/todos';
     var request = new XMLHttpRequest();
-    request.open('GET', url);
+    request.open('POST', url);
     request.responseType = 'json';
     request.send(null);
 
@@ -27,7 +27,7 @@ var div_add_button = div_add.getElementsByTagName('form')[0].getElementsByTagNam
 div_add_button.addEventListener('click', (event) => {
     var elm = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0];
     var inputValue = trimWhitespaces(elm.value);
-    var url = '/todos';
+    var url = '/save';
     var data = JSON.stringify({ isdone: false, content: inputValue });
     var request = new XMLHttpRequest();
     request.open('POST', url);
