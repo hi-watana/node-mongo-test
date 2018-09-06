@@ -1,3 +1,5 @@
+'use strict';
+
 window.onload = () => {
     let url = '/todos';
     var request = new XMLHttpRequest();
