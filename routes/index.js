@@ -29,11 +29,10 @@ router.post('/todos', (req, res, next) => {
     console.log(req.body);
     var todoItem = new TodoItem(req.body);
 
-    todoItem.save((error) => {
+    todoItem.save((error, data) => {
         if (error) throw error;
-    })
-
-    res.end(JSON.stringify(req.body));
+        res.json(data);
+    });
 });
 
 router.post('/check', (req, res, next) => {
