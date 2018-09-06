@@ -103,6 +103,7 @@ const addTableItem = (todo, request) => {
 
     var result = request.response;
     new_td2.appendChild(document.createTextNode(todo.content));
+    new_td2.classList.add('td-break');
     new_tr.appendChild(new_td2);
     main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0].appendChild(new_tr);
 
