@@ -15,9 +15,7 @@ window.onload = () => {
         } else {
             // successfully requested
             var result = request.response;
-            console.log(result.todos);
             for (var todo of result.todos) {
-                console.log(todo);
                 addTableItem(todo, request);
             }
         }
@@ -32,8 +30,7 @@ main_divs[0].getElementsByTagName('form')[0].getElementsByTagName('button')[0].a
         alert('You can\'t add an empty item.');
     } else {
         let url = '/todos';
-        var data = JSON.stringify({isdone: false, content: inputValue}); // 送信データ ('param=value&...')
-        console.log(data);
+        var data = JSON.stringify({isdone: false, content: inputValue});
         var request = new XMLHttpRequest();
         request.open('POST', url);
         request.setRequestHeader('Content-Type', 'application/json');
@@ -49,7 +46,6 @@ main_divs[0].getElementsByTagName('form')[0].getElementsByTagName('button')[0].a
             } else {
                 // successfully requested
                 var todo = request.response;
-                console.log(todo.content);
                 addTableItem(todo, request);
             }
         };
@@ -79,7 +75,6 @@ const addTableItem = (todo, request) => {
         request.setRequestHeader('Content-Type', 'application/json');
         request.responseType = 'json';
         request.send(JSON.stringify({_id: this.id, isdone: this.checked}));
-        console.log('sent');
 
         request.onreadystatechange = () => {
             if (request.readyState != 4) {
@@ -88,7 +83,6 @@ const addTableItem = (todo, request) => {
                 // request failed
             } else {
                 // successfully requested
-                console.log('toggle');
             }
         };
     })
