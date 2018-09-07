@@ -1,3 +1,19 @@
+// boolean value for input validation
+var isValidInput = false;
+var isValidSelect = false;
+
+// function for toggling button
+const toggleButton = () => {
+    var hasAttr = div_add_button.hasAttribute('disabled');
+    if (isValidInput && isValidSelect) {
+        if (hasAttr)
+            div_add_button.removeAttribute('disabled');
+    } else {
+        if (!hasAttr)
+            div_add_button.setAttribute('disabled', 'disabled');
+    }
+}
+
 var main_divs = document.getElementsByTagName('main')[0].getElementsByTagName('div');
 var div_add = main_divs[0];
 var div_table = main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
@@ -14,13 +30,8 @@ var div_add_input = div_add_form.getElementsByTagName('input')[0];
 // Input validation
 div_add_input.addEventListener('keyup', (event) => {
     var inputValue = div_add.getElementsByTagName('form')[0].getElementsByTagName('input')[0].value;
-    if (trimWhitespaces(inputValue) == '') {
-        if (!div_add_button.hasAttribute('disabled'))
-            div_add_button.setAttribute('disabled', 'disabled');
-    } else {
-        if (div_add_button.hasAttribute('disabled'))
-        div_add_button.removeAttribute('disabled');
-    }
+    isValidInput = trimWhitespaces(inputValue) != '';
+    toggleButton();
 }, false);
 
 // Disable button when some key is being pressed.
@@ -70,8 +81,9 @@ div_add_button.addEventListener('click', (event) => {
 var div_add_select = div_add_form.getElementsByTagName('select')[0];
 
 div_add_select.addEventListener('change', function (event) {
-    console.log(this.value);
-})
+    isValidSelect = (this.value != '');
+    toggleButton();
+});
 
 const addTableItem = (todo, parentNode) => {
     var new_tr = document.createElement('tr');
