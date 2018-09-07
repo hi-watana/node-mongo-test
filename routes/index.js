@@ -37,7 +37,7 @@ router.post('/check', (req, res, next) => {
             if (error) throw error;
         }
     );
-    res.json({});
+    res.json({_id: req.body._id, isdone: req.body.isdone});
 });
 
 module.exports = router;

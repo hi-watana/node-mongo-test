@@ -16,7 +16,9 @@ const toggleButton = () => {
 
 var main_divs = document.getElementsByTagName('main')[0].getElementsByTagName('div');
 var div_add = main_divs[0];
-var div_table = main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+var div_tables = main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody');
+var div_undone_table = div_tables[0];
+var div_done_table   = div_tables[1];
 
 var div_add_form = div_add.getElementsByTagName('form')[0];
 
@@ -70,12 +72,13 @@ div_add_button.addEventListener('click', (event) => {
         } else {
             // successfully requested
             var todo = request.response;
-            addTableItem(todo, div_table);
+            addTableItem(todo, div_undone_table);
             console.log(todo.deadline);
         }
     };
     div_add_input.value = '';
     div_add_textarea.value = '';
+    div_add_button.setAttribute('disabled', 'disabled');
 });
 
 var div_add_select = div_add_form.getElementsByTagName('select')[0];
@@ -110,12 +113,22 @@ const addTableItem = (todo, parentNode) => {
                 // request failed
             } else {
                 // successfully requested
+                var result = request.response;
+                if (result.isdone) {
+                    var oldChild = div_undone_table.removeChild(document.getElementById('tr' + result._id));
+                    div_done_table.appendChild(oldChild);
+                } else {
+                    var oldChild = div_done_table.removeChild(document.getElementById('tr' + result._id));
+                    div_undone_table.appendChild(oldChild);
+                }
+
             }
         };
     })
     new_div.appendChild(new_label);
     new_td1.appendChild(new_div);
     new_tr.appendChild(new_td1);
+    new_tr.id = 'tr' + todo._id;
     var new_td2 = document.createElement('td');
 
     new_td2.appendChild(document.createTextNode(todo.title));
@@ -140,7 +153,7 @@ const trimWhitespaces = (s) => {
 const DATE_RANGE = 100;
 
 window.onload = () => {
-    var url = '/todos';
+    var url = '/todos'
     var request = new XMLHttpRequest();
     request.open('POST', url);
     request.responseType = 'json';
@@ -153,12 +166,17 @@ window.onload = () => {
             // request failed
         } else {
             // successfully requested
-            var result = request.response;
-            var tableFragment = document.createDocumentFragment();
-            for (var todo of result.todos) {
-                addTableItem(todo, tableFragment);
+            let result = request.response;
+            let doneTableFragment = document.createDocumentFragment();
+            let undoneTableFragment = document.createDocumentFragment();
+            for (let todo of result.todos) {
+                if (todo.isdone)
+                    addTableItem(todo, doneTableFragment);
+                else
+                    addTableItem(todo, undoneTableFragment);
             }
-            div_table.appendChild(tableFragment);
+            div_done_table.appendChild(doneTableFragment);
+            div_undone_table.appendChild(undoneTableFragment);
 
             var selectFragment = document.createDocumentFragment();
             var today = new Date();
