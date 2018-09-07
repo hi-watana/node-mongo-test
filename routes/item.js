@@ -36,7 +36,14 @@ router.post('/update', (req, res, next) => {
             res.redirect('/');
         }
     );
+});
     
+router.post('/delete', (req, res, next) => {
+    var body = req.body;
+    TodoItem.findByIdAndRemove(body._id, (error) => {
+        if (error) throw error;
+        res.redirect('/');
+    });
 });
 
 module.exports = router;

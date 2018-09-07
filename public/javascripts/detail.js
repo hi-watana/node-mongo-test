@@ -1,3 +1,7 @@
+// ID for this todo item
+// This value is defined when loading this page.
+var id;
+
 var main_divs = document.getElementsByTagName('main')[0].getElementsByTagName('div');
 var div_save = main_divs[0];
 
@@ -32,8 +36,11 @@ div_save_input.addEventListener('keydown', (event) => {
 
 var div_save_textarea = div_save_form.getElementsByTagName('textarea')[0];;
 
-var div_save_button = div_save_form.getElementsByTagName('button')[0];;
+var buttons = div_save_form.getElementsByClassName('btn-group')[0].getElementsByTagName('button');
+var div_save_button = buttons[0];;
+var div_delete_button = buttons[1];;
 
+// save change
 div_save_button.addEventListener('click', function (event) {
     if (!confirm('Save changes and go back?')) return;
 
@@ -43,7 +50,7 @@ div_save_button.addEventListener('click', function (event) {
     var url = '/item/update';
     var data = JSON.stringify(
         {
-            _id: this.id,
+            _id: id,
             title: inputValue,
             description: textareaValue,
             deadline: selectValue
@@ -70,11 +77,37 @@ div_save_button.addEventListener('click', function (event) {
 
 });
 
+// delete todo item.
+div_delete_button.addEventListener('click', (event) => {
+    if (!confirm('Do you want to delete this item?')) return;
+
+    var url = '/item/delete';
+    
+    var data = JSON.stringify({_id: id});
+    var request = new XMLHttpRequest();
+    request.open('POST', url);
+    request.setRequestHeader('Content-Type', 'application/json');
+
+    request.responseType = 'json';
+    request.send(data);
+
+    request.onreadystatechange = () => {
+        if (request.readyState != 4) {
+            // requesting in progress
+        } else if (request.status != 200) {
+            // request failed
+        } else {
+            // successfully requested
+            window.location.href = '/';
+        }
+    };
+})
+
 const DATE_RANGE = 100;
 
 window.onload = () => {
     var url = '/item';
-    var id = window.location.search.split('=')[1];
+    id = window.location.search.split('=')[1];
     var request = new XMLHttpRequest();
     request.open('POST', url);
     request.setRequestHeader('Content-Type', 'application/json');
