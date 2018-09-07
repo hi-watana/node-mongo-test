@@ -23,9 +23,14 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', (req, res, next) => {
+    var body = req.body;
     TodoItem.update(
-        {_id: req.body._id},
-        {$set: {title: req.body.title, description: req.body.description}},
+        {_id: body._id},
+        {$set: {
+            title: body.title,
+            description: body.description,
+            deadline: body.deadline
+        }},
         (error) => {
             if (error) throw error;
             res.redirect('/');

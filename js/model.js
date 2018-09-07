@@ -3,9 +3,10 @@ var Schema = mongoose.Schema;
 
 // schema
 var TodoItem = new Schema({
-    isdone: Boolean,
+    isdone: {type: Boolean, default: false},
     title: String,
-    description: String
+    description: String,
+    deadline: {type: Date, default: Date.now}
 });
 
 const MONGODB_URI = process.env.MONGODB_URI;

@@ -10,6 +10,8 @@ div_save_form.addEventListener('submit', (event) => {
 
 var div_save_input = div_save_form.getElementsByTagName('input')[0];;
 
+var div_save_select = div_save_form.getElementsByTagName('select')[0];
+
 // Input validation
 div_save_input.addEventListener('keyup', (event) => {
     var inputValue = div_save.getElementsByTagName('form')[0].getElementsByTagName('input')[0].value;
@@ -37,12 +39,14 @@ div_save_button.addEventListener('click', function (event) {
 
     var inputValue = trimWhitespaces(div_save_input.value);
     var textareaValue = div_save_textarea.value;
+    var selectValue = div_save_select.value;
     var url = '/item/update';
     var data = JSON.stringify(
         {
             _id: this.id,
             title: inputValue,
-            description: textareaValue
+            description: textareaValue,
+            deadline: selectValue
         });
     var request = new XMLHttpRequest();
     request.open('POST', url);
@@ -66,6 +70,8 @@ div_save_button.addEventListener('click', function (event) {
 
 });
 
+const DATE_RANGE = 100;
+
 window.onload = () => {
     var url = '/item';
     var id = window.location.search.split('=')[1];
@@ -87,6 +93,22 @@ window.onload = () => {
             div_save_button.id = result._id;
             div_save_input.value = result.title;
             div_save_textarea.value = result.description;
+            div_save_select.value = result.deadline;
+            var option_top = div_save_select.getElementsByTagName('option')[0];
+            option_top.value = result.deadline;
+            option_top.textContent = new Date(result.deadline).toDateString();
+
+            var selectFragment = document.createDocumentFragment();
+            var today = new Date();
+            var today_year = today.getFullYear();
+            var today_month = today.getMonth();
+            var today_date = today.getDate();
+            [...Array(DATE_RANGE).keys()].map(i => createDateOption(new Date(today_year, today_month, today_date + i)))
+                .forEach(s => {
+                    selectFragment.appendChild(s);
+                });
+
+            div_save_select.appendChild(selectFragment);
         }
     };
 }
@@ -94,3 +116,14 @@ window.onload = () => {
 const trimWhitespaces = (s) => {
     return s.replace(/^\s+|\s+$/, '');
 }
+
+const createDateOption = (date) => {
+    let option = document.createElement('option');
+    option.appendChild(document.createTextNode(date.toDateString()));
+    option.value = date.toISOString();
+    return option;
+}
+
+div_save_select.addEventListener('change', function (event) {
+    console.log(this.value);
+})
