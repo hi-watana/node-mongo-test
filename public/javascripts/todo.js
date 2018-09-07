@@ -118,18 +118,18 @@ const addTableItem = (todo, request) => {
     new_div.appendChild(new_label);
     new_td1.appendChild(new_div);
     new_tr.appendChild(new_td1);
-    new_tr.id = todo._id;
     var new_td2 = document.createElement('td');
 
-    var result = request.response;
     new_td2.appendChild(document.createTextNode(todo.title));
     new_td2.classList.add('td-break');
-    new_tr.appendChild(new_td2);
-    new_tr.classList.add('tr-pointer');
+    new_td2.classList.add('tr-pointer');
+    new_td2.id = todo._id;
 
-    new_tr.addEventListener('click', function (event) {
+    new_td2.addEventListener('click', function (event) {
         window.location.href = '/item?id=' + this.id;
     });
+
+    new_tr.appendChild(new_td2);
 
     main_divs[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0].appendChild(new_tr);
 
