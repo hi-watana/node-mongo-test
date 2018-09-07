@@ -16,7 +16,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/todos', (req, res, next) => {
-    TodoItem.find((error, result) => {
+    TodoItem.find({}).sort({ isdone: 0}).exec((error, result) => {
         if (error) throw error;
         res.json({todos: result});
     });
